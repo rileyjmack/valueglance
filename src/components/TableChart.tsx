@@ -4,8 +4,6 @@ import {
   CategoryScale,
   LinearScale,
   PointElement,
-  Scale,
-  CoreScaleOptions,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Scatter } from "react-chartjs-2";
@@ -20,23 +18,28 @@ interface TableData {
 }
 
 const TableChart = ({ data }: { data: TableData }) => {
-  const chartData = {
-    datasets: data.rows.map((row, rowIndex) => ({
-      data: row.map((cell, colIndex) => ({
-        x: colIndex,
-        y: -rowIndex,
-      })),
-      pointRadius: 0,
-      showLine: false,
-      datalabels: {
-        labels: {
-          value: {
-            formatter: (_value: unknown, context: Context) =>
-              row[context.dataIndex],
-          },
+  const allRows = [data.headers, ...data.rows];
+
+  const datasets = allRows.map((row, rowIndex) => ({
+    data: row.map((_, colIndex) => ({
+      x: colIndex,
+      y: -rowIndex,
+    })),
+    pointRadius: 0,
+    showLine: false,
+    datalabels: {
+      labels: {
+        value: {
+          formatter: (_: unknown, context: Context) => row[context.dataIndex],
         },
       },
-    })),
+    },
+    backgroundColor: "rgba(0, 0, 0, 0)",
+    borderColor: "rgba(0, 0, 0, 0)",
+  }));
+
+  const chartData = {
+    datasets,
   };
 
   const options = {
@@ -45,39 +48,28 @@ const TableChart = ({ data }: { data: TableData }) => {
     scales: {
       x: {
         type: "linear" as const,
-        position: "top" as const,
-        min: -0.3,
-        max: data.headers.length - 0.3,
-        ticks: {
-          callback: function (
-            this: Scale<CoreScaleOptions>,
-            tickValue: string | number
-          ) {
-            const idx =
-              typeof tickValue === "number"
-                ? Math.floor(tickValue)
-                : parseInt(tickValue);
-            return data.headers[idx] || "";
-          },
-          stepSize: 1,
-        },
-        grid: {
-          display: true,
-          drawBorder: true,
-          drawOnChartArea: true,
-        },
-      },
-      y: {
-        type: "linear" as const,
-        min: -(data.rows.length - 0.3),
-        max: 0.3,
+        min: -0.5,
+        max: data.headers.length - 0.5,
         ticks: {
           display: false,
         },
         grid: {
-          display: true,
           drawBorder: true,
           drawOnChartArea: true,
+          color: "rgba(255, 255, 255, 0.1)",
+        },
+      },
+      y: {
+        type: "linear" as const,
+        min: -(allRows.length - 0.5),
+        max: 0.5,
+        ticks: {
+          display: false,
+        },
+        grid: {
+          drawBorder: true,
+          drawOnChartArea: true,
+          color: "rgba(255, 255, 255, 0.1)",
         },
       },
     },
@@ -91,17 +83,23 @@ const TableChart = ({ data }: { data: TableData }) => {
       datalabels: {
         align: "center" as const,
         anchor: "center" as const,
-        color: "#888",
-        font: {
-          size: 18,
-        },
+        color: "white",
+        font: (context: Context) => ({
+          size: 14,
+          weight:
+            context.datasetIndex === 0
+              ? ("bold" as const)
+              : ("normal" as const),
+        }),
       },
     },
   };
 
   return (
-    <div style={{ height: `${Math.max(data.rows.length * 40, 200)}px` }}>
-      <Scatter data={chartData} options={options} />
+    <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+      <div style={{ height: `${Math.max(data.rows.length * 40, 200)}px` }}>
+        <Scatter data={chartData} options={options} />
+      </div>
     </div>
   );
 };
