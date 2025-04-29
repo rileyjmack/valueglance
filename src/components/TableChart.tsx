@@ -54,9 +54,10 @@ const TableChart = ({ data }: { data: TableData }) => {
           display: false,
         },
         grid: {
-          drawBorder: true,
-          drawOnChartArea: true,
-          color: "rgba(255, 255, 255, 0.1)",
+          display: false,
+          drawBorder: false,
+          drawOnChartArea: false,
+          color: "transparent",
         },
       },
       y: {
@@ -67,9 +68,10 @@ const TableChart = ({ data }: { data: TableData }) => {
           display: false,
         },
         grid: {
-          drawBorder: true,
-          drawOnChartArea: true,
-          color: "rgba(255, 255, 255, 0.1)",
+          display: false,
+          drawBorder: false,
+          drawOnChartArea: false,
+          color: "transparent",
         },
       },
     },
