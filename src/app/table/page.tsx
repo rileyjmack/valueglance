@@ -27,6 +27,7 @@ const FINNHUB_KEY: string = API_KEY;
 export default function TablePage() {
   const [stockData, setStockData] = useState<StockQuote | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isTableVisible, setIsTableVisible] = useState(false);
 
   async function fetchFinancialData(
     endpoint: string,
@@ -91,9 +92,36 @@ export default function TablePage() {
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gray-900 rounded-lg shadow p-6">
-          <h1 className="text-2xl font-bold mb-4">AAPL Stock Data</h1>
+          <button
+            onClick={() => setIsTableVisible(!isTableVisible)}
+            className="flex items-center w-full text-left mb-4 hover:opacity-80 transition-opacity"
+          >
+            <h1 className="text-2xl font-bold">AAPL Stock Data</h1>
+            <svg
+              className={`w-6 h-6 ml-2 transform transition-transform ${
+                isTableVisible ? "rotate-180" : ""
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
           {error && <div className="text-red-400 mb-4">{error}</div>}
-          <TableChart data={tableData} />
+          <div
+            className={`transition-all duration-300 ease-in-out overflow-hidden ${
+              isTableVisible ? "max-h-[800px] opacity-100" : "max-h-0 opacity-0"
+            }`}
+          >
+            <TableChart data={tableData} />
+          </div>
         </div>
       </div>
     </div>
